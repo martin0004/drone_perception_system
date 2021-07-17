@@ -103,33 +103,33 @@ Udacity provided students with some starter code. This starter code can be insta
 
 | Indices          | Description                                   |
 |------------------|-----------------------------------------------|
-| $$x$$ (no index)   | True value of x (ground truth).               |
-| $$x_{acc}$$        | Variable from IMU accelerometer measurement.  |
-| $x_{GPS}$        | Variable from GPS measurement.                |
-| $x_{gyro}$       | Variable from IMU gyroscope measurement.      |
-| $x^b$            | Variable expressed in drone body frame.       |
-| $\tilde{x}$      | Measured variable.                            |
-| $\hat{x}$        | Estimated variable.                           |
-| $\bar{x}$        | Predicted variable (intermediate EKF value).  |
-| $x_t$            | Variable at time step t.                      |
-| $x_{t-1}$        | Variable at time step t-1.                    |
+| x (no index)     | True value of x (ground truth).               |
+| x_acc            | Variable from IMU accelerometer measurement.  |
+| x_GPS            | Variable from GPS measurement.                |
+| x_gyro           | Variable from IMU gyroscope measurement.      |
+| x^b              | Variable expressed in drone body frame.       |
+| x_tilde          | Measured variable.                            |
+| x_hat            | Estimated variable.                           |
+| x_bar            | Predicted variable (intermediate EKF value).  |
+| x_t              | Variable at time step t.                      |
+| x_{t-1}          | Variable at time step t-1.                    |
 
 
 | Measurement                   | Description                                     |
 |-------------------------------|-------------------------------------------------|
-| $\hat{x}$                     | GPS measurement - x location - global frame.    |
-| $\hat{y}$                     | GPS measurement - y location - global frame.    |
-| $\hat{z}$                     | GPS measurement - z location - global frame.    |
+| x_hat                     | GPS measurement - x location - global frame.    |
+| y_hat                     | GPS measurement - y location - global frame.    |
+| z_hat                     | GPS measurement - z location - global frame.    |
 | $\hat{\dot{x}}$, $\hat{vx}$   | GPS measurement - x speed - global frame.       |
 | $\hat{\dot{y}}$, $\hat{vy}$   | GPS measurement - y speed - global frame.       |
 | $\hat{\dot{z}}$, $\hat{vz}$   | GPS measurement - z speed - global frame.       |
 | $\tilde{\ddot{x}}^b$          | IMU measurement - x acceleration - body frame.  |
 | $\tilde{\ddot{y}}^b$          | IMU measurement - y acceleration - body frame.  |
 | $\tilde{\ddot{z}}^b$          | IMU measurement - z acceleration - body frame.  |
-| $\tilde{p}$                   | IMU measurement - x body rate - body frame.     |
-| $\tilde{q}$                   | IMU measurement - y body rate - body frame.     |
-| $\tilde{r}$                   | IMU measurement - z body rate - body frame.     |
-| $\tilde{\psi}$                | Magnetometer measurement - yaw - global frame.  |
+| p_tilde                   | IMU measurement - x body rate - body frame.     |
+| q_tilde                  | IMU measurement - y body rate - body frame.     |
+| r_tilde                  | IMU measurement - z body rate - body frame.     |
+| ψ_tilde                  | Magnetometer measurement - yaw - global frame.  |
 
 
 | Errors                   | Description                                     |
@@ -267,7 +267,5 @@ Euler angles Ф, θ, φ are provided as input to any estimator which needs to de
 <br>
 <img src="images/rotation_matrix_-_fully_developped.jpg" width="700"/>
 
-$\begin{matrix}
-1 & 1 & 1 \\
-1 & 1 & 1
-\end{matrix}$
+
+
