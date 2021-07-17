@@ -103,8 +103,8 @@ Udacity provided students with some starter code. This starter code can be insta
 
 | Indices          | Description                                   |
 |------------------|-----------------------------------------------|
-| $x$ (no index)   | True value of x (ground truth).               |
-| $x_{acc}$        | Variable from IMU accelerometer measurement.  |
+| $$x$$ (no index)   | True value of x (ground truth).               |
+| $$x_{acc}$$        | Variable from IMU accelerometer measurement.  |
 | $x_{GPS}$        | Variable from GPS measurement.                |
 | $x_{gyro}$       | Variable from IMU gyroscope measurement.      |
 | $x^b$            | Variable expressed in drone body frame.       |
