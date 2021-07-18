@@ -277,7 +277,7 @@ This project focuses on developing the **perception** system. The **actuators**,
 
 # Perception System
 
-##### Overview
+### Overview
 
 The perception system developed in this project is made of 2 estimators, which are described below.
 
@@ -288,7 +288,7 @@ Note that the inputs / outputs I used are based upon Udacity’s C++ Flight Simu
 <br>
 <br>
 
-##### Estimated State Vector
+### Estimated State Vector
 
 The estimation system uses the following “full” vector system internally. Different estimators inside the system will update / use different state variables from this vector.
 
@@ -305,7 +305,7 @@ This state split is the methodology which was suggested in the Estimation course
 
 
 
-# Attitude Estimator
+### Attitude Estimator
 
 
 ##### Overview
@@ -339,7 +339,7 @@ This state split is the methodology which was suggested in the Estimation course
 
 
 
-# Position & Speed Estimator
+### Position & Speed Estimator
 
 ##### Overview
 
@@ -459,6 +459,168 @@ Difference between any variable or vector (measured, predicted, estimated or oth
 
 <img src="images/errors_-_max_euler_error.jpg" height="50"/>
 <br>
+
+
+
+
+
+# Implementation in C++ Flight Simulator
+
+### Overview
+
+The perception system developed above was implemented in Udacity’s C++ Flight Simulator [3]. Most of the code was provided by Udacity. The perception system itself had to be implemented in file `QuadEstimatorEKF.cpp` and the system parameters tuned in file `QuadEstimatorEKF.txt`.
+<br>
+
+### Project Directory Structure
+
+	DIRECTORIES / FILES (*)			DESCRIPTION
+
+	images							Images for final report.
+
+	simulator/         				Udacity C++ Flight Simulator (contains code for perception system).
+
+		config/
+
+			06_SensorNoise.txt		Scenario 06 configuration file.
+			...						...
+			11_GPSUpdate.txt		Scenario 11 configuration file.
+			QuadEstimatorEKF.txt	Perception system configuration parameters.
+			
+		config/log					Simulation log files.
+		
+		config/traj					Trajectory definition files for simulation scenarios.
+		
+		proj						Project files (used for compiling the simulator).
+		
+			CPPSim.sim				Master file for compiling with QTCreator in Linux.
+			
+		src/
+		
+			QuadEstimatorEKF.cpp	Main file for implementing perception system.
+			QuadEstimatorEKF.h		Contains global variables and their types (matrix, vector, ...).
+		
+		validation/					Data analysis for the "validation" phase of project.
+		
+		videos/						Videos for final report.
+
+		(*) Only showing directories and files relevant to this project.
+
+<br>
+
+### Perception System (`QuadEstimatorEKF.cpp`)
+
+File `QuadEstimatorEKF.cpp` is where the perception system gets implemented. Udacity provides an initial version of this file which contains a “skeleton” of the code. The image below provides an overview of the class & methods inside this file, along with how they are related.
+
+	QuadEstimatorEKF			Class which implements the perception system
+								(contains EKF and complementary filter CF).
+
+		Init					Initilizes global variables by loading configuration
+								parameters in `QuadEstimatorEKF.txt`.
+
+		UpdateFromIMU (*)		Update Euler angles using IMU data.
+
+		UpdateTrueError			Update all global variables representing a true error
+								(trueError, pitchErr, rollErr, maxEuler, ...).
+
+		PredictState (*)		Run the process model on the EKF state vector
+								(except for yaw).
+
+		GetRgbPrime (*)			Derive matrix R_bg'.
+
+		Predict (*)				Perform the entire PREDICT step of the EKF
+								(calls PredictState under the hood).
+
+		UpdateFromGPS (*)		EKF measurement step for GPS (speeds and velocities).
+
+		UpdateFromMag (*)		EKF measurement update for magnetometer (yaw).
+
+		Update					Generic helper function called by UpdateFromGPS and UpdateFromMag.						
+		GetData					Helper function for plotting graphs.
+
+		GetFields				List of fields for plotting estimation errors.
+
+		(*) Content of this method implemented by student.
+
+
+### Configuration Parameters (`QuadEstimatorEKF.txt`)
+
+The perception system configuration parameters are available in file `QuadEstimatorEKF.txt`. The simulator comes with some default values which are tuned throughout the validation phase.
+
+The content of this file is loaded when a scenario starts in order to initialize several global variable (see next paragraph). Note that if you change a value in this file, you do not need to restart the simulator. The new parameter values will take effect as soon as the scenario is reset (you can also type “R” on your keyboard to reset the scenario faster). This allows for interactive tuning of these parameters.
+
+| Parameter   | Default Values              | Description                                                    | Variable <br> in Report    |
+|-------------|-----------------------------|----------------------------------------------------------------|----------------------------|
+| InitState   | 0, 0, -1, 0, 0, 0, 0        | EKF estimated state vector - initial values.                   | x_hat                      |
+| InitStdDevs | .1, .1, .3, .1, .1, .3, .05 | EKF estimated and predicted covariance matrix - initial values | Σ_hat, Σ_bar               |
+| QPosXYStd   | 0.05                        | Process noise standard deviation - x,y positions.              | σ_{hat x}, σ_{hat_y}       |
+| QPosZStd    | 0.05                        | Process noise standard deviation - z position.                 | σ_{hat z}                  |
+| QVelXYStd   | 0.05                        | Process noise standard deviation - x, y speeds.                | σ_{hat vx}, σ_{hat vy}     |
+| QVelZStd    | 0.10                        | Process noise standard deviation - z speed.                    | σ_{hat vz}                 |
+| QYawStd     | 0.05                        | Process noise standard deviation - yaw.                        | σ_{hat ψ}                  |
+| GPSPosXYStd | 1                           | Measurement noise standard deviation - GPS - x,y positions.    | σ_{tilde x}, σ_{tilde y}   |
+| GPSPosZStd  | 3                           | Measurement noise standard deviation - GPS - z position.       | σ_{tilde z}                |
+| GPSVelXYStd | 0.1                         | Measurement noise standard deviation - GPS - x,y velocities.   | σ_{tilde vx}, σ_{tilde vy} |
+| GPSVelZStd  | 0.3                         | Measurement noise standard deviation - GPS - z velocity.       | σ_{tilde vz}               |
+| MagYawStd   | 0.1                         | Measurement noise standard deviation - magnetometer - yaw.     | σ_{tilde ψ}                |
+| dtIMU       | 0.002                       | Complementary filter sampling period.                          | T_s                        | 
+| attitudeTau | 100                         | Complementary filter time constant.                            | τ                          |
+
+
+### Global Variables (`QuadEstimatorEKF.h`)
+
+The following global variables are used throughout the perception system implementation. Theses global variables are initialized in files `QuadEstimatorEKF.h` and `QuadEstimatorEKF`.
+
+| Variable <br> in Simulator | Type <br> (Rows, Cols) | Value   | Description                                         | Variable <br> in Report |
+|----------------------------|------------------------|---------|-----------------------------------------------------|-------------------------|
+| QUAD_EKF_NUM_STATES        | int                    | 7       | Number of variables in EKF estimated state vector.  | -                       |
+| Q                          | MatrixXf(7,7)          | (*)     | Process noise covariance matrix.                    | Q                       |
+| R_GPS                      | MatrixXf(6,6)          | (*)     | Measurement noise covariance matrix (GPS).          | R_GPS                   |
+| R_mag                      | MatrixXf(1,1)          | (*)     | Measurement noise covariance matrix (magnetometer). | R_mag                   |
+| ekfState                   | VectorXf(7)            | (**)    | EKF estimated state vector.                         | -                       |
+| ekfCov                     | VMatrixXf(7,7)         | (**)    | EKF predicted and estimated covariance matrix.      | Σ_hat, Σ_bar            |
+| attitudeTau                | float                  | (*)     | Complementary filter time constant.                 | τ                       |
+| dtIMU                      | float                  | (*)     | Complementary filter sampling period.               | T_s                     |
+| trueError                  | VectorXf(7)            | All 0’s | Estimated state vector true error.                  | e_hat_x                 |
+| pitchErr                   | float                  | 0       | Estimated pitch true error.                         | e_hat_θ                 |
+| rollErr                    | float                  | 0       | Estimated roll true error.                          | e_hat_ϕ                 |
+| maxEuler                   | float                  | 0       | Max Euler true error.                               | e_hat_Euler             | 
+| posErrorMag                | float                  | 0       | Position magnitude true error.                      | e_hat_d                 |
+| velErrorMag                | float                  | 0       | Velocity magnitude true error.                      | e_hat_v                 |
+
+(*)  Initialized from configuration parameters. Constant throughout the simulation.
+(**) Initialized from configuration parameters. Not constant throughout the simulation.
+
+
+
+### Trajectory Definition Files (`config/traj`)
+
+Directory `config/traj` contains trajectory definitions for some scenarios. Most of these files consist of a time value and a target state for this time. Data from these files can help better understand a troubleshoot a scenario.
+
+
+### Scenario Definition Files (`config/`)
+
+
+Directory `config` contains the scenario definition files for this project. Note that this project focuses only on scenarios 6 to 11, which are described in the “Validation” part of this project. Take time to look at a configuration file before running a scenario to better understand what is happening under the hood.
+
+Common parameters for scenarios are the initial pose (x, y, z) and trajectory used in the scenario. Here is an example from scenario 7.
+
+
+<img src="images/implementation_-_scenario_definition_files_01.jpg" width="500"/>
+<br><br>
+
+You can see which sensors are used by a scenario in section `# Sensors` of a configuration file. Some scenarios also use “perfect” sensors with no noise. This is accomplished by setting the noise measurement standard deviations to 0 for these sensors. Playing with these parameters can help troubleshoot the simulation. Here is an example from scenario 7, which only uses a “perfect” IMU.
+
+<br>
+<img src="images/implementation_-_scenario_definition_files_02.jpg" width="250"/>
+<br><br>
+
+
+
+
+
+
+
+
 
 
 
