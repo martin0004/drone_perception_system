@@ -725,7 +725,7 @@ Although this was not specifically mentioned in the project instructions, measur
 
 ##### Methodology & Analysis
 
-- Method R_bg_prime was implemented with the R_bg_prime matrix calculation.
+- Method GetRgbPrime() was implemented with the R_bg_prime matrix calculation.
 - Method Predict() was completed to include the predicted covariance.
 - Process noise parameters QPosXYStd and QVelXYStd were tuned using trial-and-error (the Z terms will be updated in a later step). The following values provided reasonnable results.
 	- QPosXYStd = 0.06
@@ -770,8 +770,6 @@ Although this was not specifically mentioned in the project instructions, measur
 	- QYawStd = 0.08
 
 - Charts of yaw and yaw error were obtained from the simulator before and after the measurement update and yaw noise were implemented (see below). Before this implementation, we can clearly see a drift in estimated yaw. The error remains less than 0.1 after implementation.
-
-- Note that there is an extra line in the bottom chart representing estimated yaw standard deviation.
 
 - There is are sudden “jumps” in magnetometer readings. This is only due to the yaw value oscillating around pi rads (180o). Since yaw is measured from -pi rad (-180o) to pi rad (180o), when the angle is close to these values the noise may cause the reading value to jump ±2pi rad (360o).
 
@@ -864,8 +862,8 @@ Although this was not specifically mentioned in the project instructions, measur
 
 - Using the report structure of this project as a template for improving reports of project #2 (drone planning system [8]) and project #3 (drone control system [4]).
 
-	- Adding an “Autonomy Architecture” diagram in project #2 and project #3
-	- Adding a “Planning System Architecture” in project #2
+	- Adding an “Autonomous Drone Architecture” diagram in project #2 and project #3.
+	- Adding a “Planning System Architecture” in project #2.
 	- Info from section “C++ Implementation” in this report which is common to project #4 and project #3 could be moved to project #3 to avoid duplication.
 
 - In the “Attitude Estimator” and “Position/Speed Estimator” introduction, there is a small block diagram showing the inputs/outputs of each estimator. It would be great to modify these block diagrams so they show what happens in the inside of the estimator. As an example, the attitude estimator actually contains several internal steps: calculating the derivatives using a rotation matrix, sending roll and pitch to a complementary filter and integrating yaw only with dead reackoning. Each of these operations could be an internal block by itself with inputs /outputs. However making these “internal” block diagrams are an extra effort which is beyond scope for now...
