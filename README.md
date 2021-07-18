@@ -487,31 +487,31 @@ The perception system developed above was implemented in Udacity’s C++ Flight 
 
 	simulator/                      Udacity C++ Flight Simulator (contains code for perception system).
 
-		config/
+	    config/
 
-			06_SensorNoise.txt      Scenario 06 configuration file.
-			...                     ...
-			11_GPSUpdate.txt        Scenario 11 configuration file.
-			QuadEstimatorEKF.txt    Perception system configuration parameters.
+	        06_SensorNoise.txt      Scenario 06 configuration file.
+	        ...                     ...
+	        11_GPSUpdate.txt        Scenario 11 configuration file.
+	        QuadEstimatorEKF.txt    Perception system configuration parameters.
 			
-		config/log                  Simulation log files.
+	    config/log                  Simulation log files.
 		
-		config/traj                 Trajectory definition files for simulation scenarios.
+	    config/traj                 Trajectory definition files for simulation scenarios.
 		
-		proj                        Project files (used for compiling the simulator).
+	    proj                        Project files (used for compiling the simulator).
 		
-			CPPSim.sim              Master file for compiling with QTCreator in Linux.
+	        CPPSim.sim              Master file for compiling with QTCreator in Linux.
 			
-		src/
+	    src/
 		
-			QuadEstimatorEKF.cpp    Main file for implementing perception system.
-			QuadEstimatorEKF.h      Contains global variables and their types (matrix, vector, ...).
+	        QuadEstimatorEKF.cpp    Main file for implementing perception system.
+	        QuadEstimatorEKF.h      Contains global variables and their types (matrix, vector, ...).
 		
-		validation/                 Data analysis for the "validation" phase of project.
+	    validation/                 Data analysis for the "validation" phase of project.
 		
-		videos/                     Videos for final report.
+	    videos/                     Videos for final report.
 
-		(*) Only showing directories and files relevant to this project.
+	(*) Only showing directories and files relevant to this project.
 
 <br>
 
