@@ -451,22 +451,18 @@ The following errors were defined in order to help evaluate the quality of the m
 Difference between any variable or vector (measured, predicted, estimated or other) and its true value.
 
 <img src="images/errors_-_true_error.jpg" height="150"/>
-<br>
 
 ##### Position Magnitude Error
 
 <img src="images/errors_-_position_magnitude_error.jpg" height="50"/>
-<br>
 
 ##### Velocity Magnitude Error
 
 <img src="images/errors_-_velocity_magnitude_error.jpg" height="50"/>
-<br>
 
 ##### Max Euler Error
 
 <img src="images/errors_-_max_euler_error.jpg" height="50"/>
-<br>
 
 
 
@@ -481,7 +477,7 @@ The perception system developed above was implemented in Udacity’s C++ Flight 
 
 ### Project Directory Structure
 
-	DIRECTORIES / FILES (*)			DESCRIPTION
+	DIRECTORIES / FILES (*)         DESCRIPTION
 
 	images                          Images for final report.
 
@@ -519,35 +515,35 @@ The perception system developed above was implemented in Udacity’s C++ Flight 
 
 File `QuadEstimatorEKF.cpp` is where the perception system gets implemented. Udacity provides an initial version of this file which contains a “skeleton” of the code. The image below provides an overview of the class & methods inside this file, along with how they are related.
 
-	QuadEstimatorEKF			Class which implements the perception system
-								(contains EKF and complementary filter CF).
+	QuadEstimatorEKF            Class which implements the perception system
+	                            (contains EKF and complementary filter CF).
 
-		Init					Initilizes global variables by loading configuration
-								parameters in `QuadEstimatorEKF.txt`.
+		Init                    Initilizes global variables by loading configuration
+		                        parameters in `QuadEstimatorEKF.txt`.
 
-		UpdateFromIMU (*)		Update Euler angles using IMU data.
+		UpdateFromIMU (*)       Update Euler angles using IMU data.
 
-		UpdateTrueError			Update all global variables representing a true error
-								(trueError, pitchErr, rollErr, maxEuler, ...).
+		UpdateTrueError         Update all global variables representing a true error
+		                        (trueError, pitchErr, rollErr, maxEuler, ...).
 
-		PredictState (*)		Run the process model on the EKF state vector
-								(except for yaw).
+		PredictState (*)        Run the process model on the EKF state vector
+		                        (except for yaw).
 
-		GetRgbPrime (*)			Derive matrix R_bg'.
+		GetRgbPrime (*)         Derive matrix R_bg'.
 
-		Predict (*)				Perform the entire PREDICT step of the EKF
-								(calls PredictState under the hood).
+		Predict (*)             Perform the entire PREDICT step of the EKF
+		                        (calls PredictState under the hood).
 
-		UpdateFromGPS (*)		EKF measurement step for GPS (speeds and velocities).
+		UpdateFromGPS (*)       EKF measurement step for GPS (speeds and velocities).
 
-		UpdateFromMag (*)		EKF measurement update for magnetometer (yaw).
+		UpdateFromMag (*)       EKF measurement update for magnetometer (yaw).
 
-		Update					Generic helper function called by UpdateFromGPS and UpdateFromMag.						
-		GetData					Helper function for plotting graphs.
+		Update                  Generic helper function called by UpdateFromGPS and UpdateFromMag.						
+		GetData                 Helper function for plotting graphs.
 
-		GetFields				List of fields for plotting estimation errors.
+		GetFields               List of fields for plotting estimation errors.
 
-		(*) Content of this method implemented by student.
+	(*) Content of this method implemented by student.
 
 
 ### Configuration Parameters (`QuadEstimatorEKF.txt`)
