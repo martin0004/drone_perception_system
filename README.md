@@ -1,7 +1,5 @@
 # Autonomous Drone Perception System
 
-$\hat{x}$
-
 # Overview
 
 This project develops a state estimation system for an autonomous drone using an Extended Kalman Filter (EKF), provides a C++ implementation of this system and performs adjustments of the system parameters in a flight simulator.
@@ -237,6 +235,10 @@ Euler angles Ф, θ, ψ are provided as input to any estimator which needs to de
 <br>
 
 
+
+
+
+
 # Vehicule
 
 ##### Architecture
@@ -275,7 +277,7 @@ This project focuses on developing the **perception** system. The **actuators**,
 
 # Perception System
 
-### Perception System - Overview
+##### Overview
 
 The perception system developed in this project is made of 2 estimators, which are described below.
 
@@ -286,7 +288,7 @@ Note that the inputs / outputs I used are based upon Udacity’s C++ Flight Simu
 <br>
 <br>
 
-### Perception System - Estimated State Vector
+##### Estimated State Vector
 
 The estimation system uses the following “full” vector system internally. Different estimators inside the system will update / use different state variables from this vector.
 
@@ -302,9 +304,169 @@ This state split is the methodology which was suggested in the Estimation course
 
 
 
+
+# Attitude Estimator
+
+
+##### Overview
+
+<br>
+<img src="images/attitude_estimator_-_overview_01.jpg" width="800"/>
+<br><br>
+
+<img src="images/attitude_estimator_-_overview_02.jpg" width="800"/>
+<br>
+
+##### Complementary Filter
+
+<br>
+<img src="images/attitude_estimator_-_complementary_filter.jpg" width="800"/>
+<br>
+
+##### Pitch/Roll from IMU Accelerometers
+
+<br>
+<img src="images/attitude_estimator_-_imu_accelerometers.jpg" width="800"/>
+<br><br>
+
+##### Pitch/Roll from IMU Gyroscopes
+
+<br>
+<img src="images/attitude_estimator_-_imu_gyroscopes.jpg" width="800"/>
+<br><br>
+
+
+
+
+
+# Position & Speed Estimator
+
+##### Overview
+
+<br>
+<img src="images/position_speed_estimator_-_overview.jpg" width="700"/>
+<br><br>
+
+As its name implies, the position & speed estimator updates the position & speed state variables. It also estimates the yaw angle. This is performed using an extended Kalman filter (EKF).
+
+As mentioned earlier, the integration of the yaw angle ψ_hat was performed in the attitude estimator. Therefore yaw “skips” the process function in the EKF and goes straight to the process covariance update step g’. So when ψ_hat enters the EKF, we can represent it as ψ_bar.
+
+<br>
+
+##### Extended Kalman Filter (EKF)
+
+The extended Kalman Filter uses the following pseudo-code [1].
+
+<img src="images/ekf_pseudo_code.jpg" height="500"/>
+<br><br>
+
+##### EKF Estimated State Vector
+
+<br>
+<img src="images/position_speed_estimator_-_ekf_state_vector.jpg" heigth="400"/>
+<br><br>
+
+##### EKF Command Vector
+
+The command vector in this project is the following and is composed of the drone accelerations in the body frame as measured by the IMU accelerometers.
+
+<img src="images/position_speed_estimator_-_ekf_command_vector.jpg" heigth="400"/>
+<br><br>
+
+
+Note that in article [1], the command vector also contained a yaw command ψ_dot. However in this project, ψ_dot and the predicted yaw ψ_bar are calculated inside the attitude estimator. Therefore, there is no need to provide command ψ_dot to the position & speed estimator, only ψ_bar which is then used from the Jacobian G calculations and onward.
+<br>
+
+
+##### EKF Process Model (Transition Model)
+
+The process model for the 3D drone used in this project and its Jacobian come from reference [1]. R_bg’ is the derivative of the rotation matrix R_bg with respect to yaw ψ.
+
+Note that in the C++ implementation, the predicted yaw variable comes from the attitude estimator. So the last equation in the g function is not implemented in the EKF PREDICT() function. The Jacobian however uses all 7 state variable.
+
+
+<br>
+<img src="images/position_speed_estimator_-_ekf_process_model.jpg" width="700"/>
+<br><br>
+
+
+##### EKF Process Noise
+
+The EKF process noise is modeled with the following assumptions.
+
+1 - The noise is a multivariate Gaussian distribution centered at 0.
+2 - The covariance matrix of this distribution is diagonal (i.e. no interaction between the state variables).
+3 - Standard deviation related to x and y positions is assumed the same.
+4 - Standard deviation related to the x and y velocities is assumed the same.
+
+Diagonal terms of covariance matrix Q are tuned in the validation section of this project.
+
+<br>
+<img src="images/position_speed_estimator_-_ekf_process_noise.jpg" width="700"/>
+<br><br>
+
+##### EKF Measurement Model
+
+The measurement model for the 3D drone used in this project and its Jacobian also come from reference [1]. GPS measurements are used in the measurement update step for position and speed state variables. Magnetometer yaw is used for yaw updates.
+
+The GPS and magnetometer measurement update step are performed separately (they end up being in different functions in the C++ implementation). Although the reason for this split was not explicitly specified in the lectures, this might be because both sensors have different update rates (10 Hz for the GPS vs 100 Hz for the magnetometer).
+
+The image below provides the measurement vector, measurement model and measurement model Jacobian for the GPS and magnetometer.
+
+<br>
+<img src="images/position_speed_estimator_-_ekf_measurement_model.jpg" width="700"/>
+<br><br>
+
+
+##### EKF Measurement Noise
+
+EKF measurement noise is modeled using similar assumptions as with the process noise. However there is a separate noise model for the GPS and for the magnetometer.
+
+Diagonal terms of covariance matrices R_GPS and R_mag are tuned in the validation section of this project.
+
+<br>
+<img src="images/position_speed_estimator_-_ekf_measurement_noise.jpg" width="700"/>
+<br><br>
+
+
+
+
+
+# Errors
+
+##### Overview
+
+The following errors were defined in order to help evaluate the quality of the model. Note that these errors are the same used in the Udacity C++ Flight Simulator [3].
+
+##### True Error
+
+Difference between any variable or vector (measured, predicted, estimated or other) and its true value.
+
+<img src="images/errors_-_true_error.jpg" height="150"/>
+<br>
+
+##### Position Magnitude Error
+
+<img src="images/errors_-_position_magnitude_error.jpg" height="50"/>
+<br>
+
+##### Velocity Magnitude Error
+
+<img src="images/errors_-_velocity_magnitude_error.jpg" height="50"/>
+<br>
+
+##### Max Euler Error
+
+<img src="images/errors_-_max_euler_error.jpg" height="50"/>
+<br>
+
+
+
+
+
 # Possible improvements
 
-- Using the report structure of this project as a template for improving reports of project #2 (drone planning system [8]) and project #3 (drone control system [PROJECT [3]).
+- Using the report structure of this project as a template for improving reports of project #2 (drone planning system [8]) and project #3 (drone control system [4]).
 
 	- Adding an “Autonomy Architecture” diagram in project #2 and project #3
 	- Adding a “Planning System Architecture” in project #2
