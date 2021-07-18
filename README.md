@@ -9,8 +9,7 @@ The system developed in this project is based upon a methodology by TELLEX, BROW
 This project is part of Udacity's Autonomous Flight Engineer Nanodegree [2]. This README serves as a final report for the project.
 
 <br>
-<img src="videos/step_03_a_-_scenario_08.gif" height="400"/>
-<img src="images/ekf_pseudo_code.jpg" height="400"/>
+<img src="videos/project_-_overview.gif" height="400"/>
 
 <br><br>
 
@@ -175,8 +174,8 @@ The flight simulator itself is a small QT application. The flying area is about 
 | θ               | Drone attitude about y - global frame.          |
 | ψ               | Drone attitude about z - global frame.          |
 
-(*) Depending on the context, it will be obvious if x represents a vector or a position.
-(**) Notation $vx$ will be used when $\dot{x}$ is difficult to read (e.g. when $vx$ is used as an index).
+(*) Depending on the context, it will be obvious if x represents a vector or a position. <br>
+(**) Notation vx will be used when x_dot is difficult to read (e.g. when vx is used as an index).
 
 | Filters         | Description                                                     |
 |-----------------|-----------------------------------------------------------------|
@@ -213,26 +212,26 @@ The flight simulator itself is a small QT application. The flying area is about 
 |--------------|-------------------|
 | m            | Distance.         |
 | kg           | Mass.             |
-| s            | Zoom.             |
+| s            | Time.             |
 | Hz           | Rate (frequency). |
 | rad          | Angle.            |
 
 
 # Coordinate Frames
 
-##### Body Frame
+### Body Frame
 
 Same as in the Drone Control System project of this nanodegree [4].
 
-##### World Frame
+### World Frame
 
 Same as in the Drone Control System project of this nanodegree [4].
 
-##### Propeller Sign Convention
+### Propeller Sign Convention
 
 Same as in the Drone Control System project of this nanodegree [4].
 
-##### Rotation Matrix R_bg
+### Rotation Matrix R_bg
 
 This project use rotation matrix R_bg, which is the rotation matrix from the body frame to the world frame [1]. R_bg is a function of Euler angles Ф (pitch), θ (roll), ψ (yaw).
 
@@ -484,33 +483,33 @@ The perception system developed above was implemented in Udacity’s C++ Flight 
 
 	DIRECTORIES / FILES (*)			DESCRIPTION
 
-	images							Images for final report.
+	images                          Images for final report.
 
-	simulator/         				Udacity C++ Flight Simulator (contains code for perception system).
+	simulator/                      Udacity C++ Flight Simulator (contains code for perception system).
 
 		config/
 
-			06_SensorNoise.txt		Scenario 06 configuration file.
-			...						...
-			11_GPSUpdate.txt		Scenario 11 configuration file.
-			QuadEstimatorEKF.txt	Perception system configuration parameters.
+			06_SensorNoise.txt      Scenario 06 configuration file.
+			...                     ...
+			11_GPSUpdate.txt        Scenario 11 configuration file.
+			QuadEstimatorEKF.txt    Perception system configuration parameters.
 			
-		config/log					Simulation log files.
+		config/log                  Simulation log files.
 		
-		config/traj					Trajectory definition files for simulation scenarios.
+		config/traj                 Trajectory definition files for simulation scenarios.
 		
-		proj						Project files (used for compiling the simulator).
+		proj                        Project files (used for compiling the simulator).
 		
-			CPPSim.sim				Master file for compiling with QTCreator in Linux.
+			CPPSim.sim              Master file for compiling with QTCreator in Linux.
 			
 		src/
 		
-			QuadEstimatorEKF.cpp	Main file for implementing perception system.
-			QuadEstimatorEKF.h		Contains global variables and their types (matrix, vector, ...).
+			QuadEstimatorEKF.cpp    Main file for implementing perception system.
+			QuadEstimatorEKF.h      Contains global variables and their types (matrix, vector, ...).
 		
-		validation/					Data analysis for the "validation" phase of project.
+		validation/                 Data analysis for the "validation" phase of project.
 		
-		videos/						Videos for final report.
+		videos/                     Videos for final report.
 
 		(*) Only showing directories and files relevant to this project.
 
