@@ -8,13 +8,7 @@ The system developed in this project is based upon a methodology by TELLEX, BROW
 
 This project is part of Udacity's Autonomous Flight Engineer Nanodegree [2]. This README serves as a final report for the project.
 
-<br>
 <img src="videos/project_-_overview.gif" height="400"/>
-
-<br><br>
-
-
-
 
 
 # Safety First!
@@ -83,8 +77,6 @@ Parameters of the system developed in this project were tweaked by flying a dron
 The flight simulator itself is a small QT application. The flying area is about 5 m x 5 m and the scenarios last only a few seconds. A contextual menu allows to switch between scenarios and  display charts of the drone state variables.
 
 <img src="videos/simulator_-_overview.gif" width="700"/>
-
-<br><br>
 
 | Simulator Command        | Action               |
 |--------------------------|----------------------|
@@ -237,10 +229,7 @@ This project use rotation matrix R_bg, which is the rotation matrix from the bod
 
 Euler angles Ф, θ, ψ are provided as input to any estimator which needs to derive R internally.
 
-<br>
 <img src="images/rotation_matrix_-_fully_developped.jpg" width="700"/>
-<br>
-
 
 
 
@@ -280,8 +269,6 @@ This project focuses on developing the **perception** system. The **actuators**,
 (*) Rate = 1 / Time Step. <br>
 (**) Cannot be faster than the controller time step (0.002 s).
 
-<br><br>
-
 # Perception System
 
 ### Overview
@@ -290,10 +277,7 @@ The perception system developed in this project is made of 2 estimators, which a
 
 Note that the inputs / outputs I used are based upon Udacity’s C++ Flight Simulator internal workings [3]. These are a little different from the methodology presented in the lectures [2] and from article [1].
 
-<br>
 <img src="images/perception_system_-_architecture.jpg" width="700"/>
-<br>
-<br>
 
 ### Estimated State Vector
 
@@ -303,10 +287,7 @@ Note that the Euler angles order in this state vector is yaw (ψ), pitch (θ), r
 
 This state split is the methodology which was suggested in the Estimation course of the Nanodegree. It is a trade-off between implementation complexity, explainability and functionality. [5]
 
-<br>
 <img src="images/perception_system_-_estimated_state_vector.jpg" width="500"/>
-<br><br>
-
 
 
 
@@ -314,12 +295,9 @@ This state split is the methodology which was suggested in the Estimation course
 
 ### Attitude Estimator
 
-
 ##### Overview
 
-<br>
 <img src="images/attitude_estimator_-_overview.jpg" width="800"/>
-<br>
 
 The attitude estimator is in charge of estimating the pitch and roll angles, θ_hat and Ф_hat. This is performed using a complementary filter.
 
@@ -327,21 +305,15 @@ Furthermore, this estimator also estimates yaw angle ψ_hat by performing a simp
 
 ##### Complementary Filter
 
-<br>
 <img src="images/attitude_estimator_-_complementary_filter.jpg" width="800"/>
-<br>
 
 ##### Pitch/Roll from IMU Accelerometers
 
-<br>
 <img src="images/attitude_estimator_-_imu_accelerometers.jpg" width="800"/>
-<br><br>
 
 ##### Pitch/Roll from IMU Gyroscopes
 
-<br>
 <img src="images/attitude_estimator_-_imu_gyroscopes.jpg" width="800"/>
-<br><br>
 
 
 
@@ -351,39 +323,29 @@ Furthermore, this estimator also estimates yaw angle ψ_hat by performing a simp
 
 ##### Overview
 
-<br>
 <img src="images/position_speed_estimator_-_overview.jpg" width="700"/>
-<br><br>
 
 As its name implies, the position & speed estimator updates the position & speed state variables. It also estimates the yaw angle. This is performed using an extended Kalman filter (EKF).
 
 As mentioned earlier, the integration of the yaw angle ψ_hat was performed in the attitude estimator. Therefore yaw “skips” the process function in the EKF and goes straight to the process covariance update step g’. So when ψ_hat enters the EKF, we can represent it as ψ_bar.
-
-<br>
 
 ##### Extended Kalman Filter (EKF)
 
 The extended Kalman Filter uses the following pseudo-code [1].
 
 <img src="images/ekf_pseudo_code.jpg" height="500"/>
-<br><br>
 
 ##### EKF Estimated State Vector
 
-<br>
 <img src="images/position_speed_estimator_-_ekf_state_vector.jpg" heigth="400"/>
-<br><br>
 
 ##### EKF Command Vector
 
 The command vector in this project is the following and is composed of the drone accelerations in the body frame as measured by the IMU accelerometers.
 
 <img src="images/position_speed_estimator_-_ekf_command_vector.jpg" heigth="400"/>
-<br><br>
-
 
 Note that in article [1], the command vector also contained a yaw command ψ_dot. However in this project, ψ_dot and the predicted yaw ψ_bar are calculated inside the attitude estimator. Therefore, there is no need to provide command ψ_dot to the position & speed estimator, only ψ_bar which is then used from the Jacobian G calculations and onward.
-<br>
 
 
 ##### EKF Process Model (Transition Model)
@@ -392,10 +354,7 @@ The process model for the 3D drone used in this project and its Jacobian come fr
 
 Note that in the C++ implementation, the predicted yaw variable comes from the attitude estimator. So the last equation in the g function is not implemented in the EKF PREDICT() function. The Jacobian however uses all 7 state variable.
 
-
-<br>
 <img src="images/position_speed_estimator_-_ekf_process_model.jpg" width="700"/>
-<br><br>
 
 
 ##### EKF Process Noise
@@ -409,9 +368,7 @@ The EKF process noise is modeled with the following assumptions.
 
 Diagonal terms of covariance matrix Q are tuned in the validation section of this project.
 
-<br>
 <img src="images/position_speed_estimator_-_ekf_process_noise.jpg" width="700"/>
-<br><br>
 
 ##### EKF Measurement Model
 
@@ -421,10 +378,7 @@ The GPS and magnetometer measurement update step are performed separately (they 
 
 The image below provides the measurement vector, measurement model and measurement model Jacobian for the GPS and magnetometer.
 
-<br>
 <img src="images/position_speed_estimator_-_ekf_measurement_model.jpg" width="700"/>
-<br><br>
-
 
 ##### EKF Measurement Noise
 
@@ -432,13 +386,7 @@ EKF measurement noise is modeled using similar assumptions as with the process n
 
 Diagonal terms of covariance matrices R_GPS and R_mag are tuned in the validation section of this project.
 
-<br>
 <img src="images/position_speed_estimator_-_ekf_measurement_noise.jpg" width="700"/>
-<br><br>
-
-
-
-
 
 # Errors
 
@@ -473,7 +421,6 @@ Difference between any variable or vector (measured, predicted, estimated or oth
 ### Overview
 
 The perception system developed above was implemented in Udacity’s C++ Flight Simulator [3]. Most of the code was provided by Udacity. The perception system itself had to be implemented in file `QuadEstimatorEKF.cpp` and the system parameters tuned in file `QuadEstimatorEKF.txt`.
-<br>
 
 ### Project Directory Structure
 
@@ -509,8 +456,6 @@ The perception system developed above was implemented in Udacity’s C++ Flight 
 
 	(*) Only showing directories and files relevant to this project.
 
-<br>
-
 ### Perception System (`QuadEstimatorEKF.cpp`)
 
 File `QuadEstimatorEKF.cpp` is where the perception system gets implemented. Udacity provides an initial version of this file which contains a “skeleton” of the code. The image below provides an overview of the class & methods inside this file, along with how they are related.
@@ -544,7 +489,6 @@ File `QuadEstimatorEKF.cpp` is where the perception system gets implemented. Uda
 		GetFields               List of fields for plotting estimation errors.
 
 	(*) Content of this method implemented by student.
-
 
 ### Configuration Parameters (`QuadEstimatorEKF.txt`)
 
@@ -610,13 +554,10 @@ Common parameters for scenarios are the initial pose (x, y, z) and trajectory us
 
 
 <img src="images/implementation_-_scenario_definition_files_01.jpg" width="500"/>
-<br><br>
 
 You can see which sensors are used by a scenario in section `# Sensors` of a configuration file. Some scenarios also use “perfect” sensors with no noise. This is accomplished by setting the noise measurement standard deviations to 0 for these sensors. Playing with these parameters can help troubleshoot the simulation. Here is an example from scenario 7, which only uses a “perfect” IMU.
 
-<br>
 <img src="images/implementation_-_scenario_definition_files_02.jpg" width="250"/>
-<br><br>
 
 
 
@@ -642,32 +583,23 @@ You can see which sensors are used by a scenario in section `# Sensors` of a con
 - Drone hovering 1 m above the ground.
 - All sensors (IMU, Magnetometer and GPS) are activated and all have noise.
 
-<br>
 <img src="videos/step_01_-_scenario_06_-_no_charts.gif" width="500"/>
-<br><br>
 
 ##### Methodology & Analysis
 
 - Sensor data was collected from all sensors over 60 s (I had to comment line `Sim.RunMode` in the scenario configuration file). Below we can see data for all 13 sensors. All seem to have a random behavior. Most of them are centered around 0, except for GPS z position (around 1 m above ground, which is consistent with the scenario initial conditions) and IMU az value (centered around +g).
 
-<br>
 <img src="images/step_01_-_scenario_06_-_noise.jpeg" width="700"/>
-<br><br>
 
 - A sanity check was performed to see if noise data distributions are relatively Gaussian. Histograms were plotted for all data and confirmed the Gaussian distributions.
 
-<br>
 <img src="images/step_01_-_scenario_06_-_noise_histograms.jpg" width="700"/>
-<br><br>
 
 - Another question before extracting standard deviations is to make sure we have enough data points so σ and μ have converged, which is the case (values seem to relatively converge after 30 s).
 
-<br>
 <img src="images/step_01_-_scenario_06_-_noise_mean_convergence.jpg" width="400"/>
 
-<br>
 <img src="images/step_01_-_scenario_06_-_noise_std_convergence.jpg" width="400"/>
-<br><br>
 
 
 ##### Results
@@ -690,17 +622,14 @@ You can see which sensors are used by a scenario in section `# Sensors` of a con
 Standard deviations for the GPS x postion and IMU x accelerations are injected at the top of the scenario configuration file (line `Sim.RunMode` is also uncommented to reactivate the max simulation time). Standard deviation capture 68 % of noise, which is was the target metric.
 
 <img src="videos/step_01_-_scenario_06_-_with_charts.gif" width="500"/>
-<br><br>
 
 <img src="images/step_01_-_scenario_06_-_success_metrics.jpg" width="700"/>
-<br><br>
 
 ##### Note
 
 Although this was not specifically mentioned in the project instructions, measurement noise standard deviations derived above were injected into file QuadEstimatorEKF.txt
 
 <img src="images/step_01_-_updated_stds.jpg" width="350"/>
-<br><br>
 
 
 ### Step 2 - Attitude Estimation
@@ -726,7 +655,6 @@ Although this was not specifically mentioned in the project instructions, measur
 	- t = 3~4 s, series of yaw commands
 
 <img src="videos/step_02_-_scenario_07_-_no_charts.gif" width="500"/>
-<br><br>
 
 ##### Methodology & Analysis
 
@@ -738,13 +666,10 @@ Although this was not specifically mentioned in the project instructions, measur
 ##### Results
 
 <img src="images/step_02_-_scenario_07_-_estimated_states.jpg" width="700"/>
-<br><br>
 
 <img src="videos/step_02_-_scenario_07_-_with_charts.gif" width="500"/>
-<br><br>
 
 <img src="images/step_02_-_scenario_07_-_success_metrics.jpg" width="700"/>
-<br><br>
 
 
 ### Step 3-A - Prediction Step (No Noise)
@@ -765,7 +690,6 @@ Although this was not specifically mentioned in the project instructions, measur
 - Only the IMU is activated and its noise levels are set to 0.
 
 <img src="videos/step_03_a_-_scenario_08.gif" width="700"/>
-<br><br>
 
 ##### Methodology & Analysis
 
@@ -776,7 +700,6 @@ Although this was not specifically mentioned in the project instructions, measur
 ##### Results
 
 <img src="images/step_03_a_-_scenario_08_-_predicted_states.jpg" width="700"/>
-<br><br>
 
 - The charts allowed to do a qualitative validation that the predicted state update (positions and speeds) was implemented correctly.
 
@@ -799,7 +722,6 @@ Although this was not specifically mentioned in the project instructions, measur
 - Only the IMUs are activated and their noise is also activated.
 
 <img src="videos/step_03_b_-_scenario_09.gif" width="500"/>
-<br><br>
 
 ##### Methodology & Analysis
 
@@ -815,7 +737,6 @@ Although this was not specifically mentioned in the project instructions, measur
 ##### Results
 
 <img src="images/step_03_b_-_scenario_09_-_predicted_std.jpg" width="700"/>
-<br><br>
 
 - The charts allowed to do a qualitative validation that the predicted covariance update (positions and speeds) was implemented correctly.
 
@@ -840,7 +761,6 @@ Although this was not specifically mentioned in the project instructions, measur
 - Now the IMU and magnometer are activated and they both have noise.
 
 <img src="images/step_04_-_scenario_10.jpg" width="700"/>
-<br><br>
 
 ##### Methodology & Analysis
 
@@ -858,10 +778,8 @@ Although this was not specifically mentioned in the project instructions, measur
 ##### Results
 
 <img src="images/step_04_-_scenario_10_-_estimated_states.jpg" width="700"/>
-<br><br>
 
 <img src="images/step_04_-_scenario_10_-_success_metrics.jpg" width="700"/>
-<br><br>
 
 
 
@@ -883,7 +801,6 @@ Although this was not specifically mentioned in the project instructions, measur
 - By default this scenario uses an ideal estimator and sensors do not have noise. Disable the ideal estimator by setting Quad.UseIdealEstimator to 0 and commenting lines SimIMU.AccelStd and SimIMU.GyroStd.
 
 <img src="images/step_05_-_scenario_11_-_activate_noise.jpg" width="250"/>
-<br><br>
 
 
 ##### Methodology & Analysis
@@ -900,7 +817,6 @@ Although this was not specifically mentioned in the project instructions, measur
 | <img src="videos/step_05_-_scenario_11_-_before_tuning.gif" width="700"/> | <img src="videos/step_05_-_scenario_11_-_after_tuning.gif" width="700"/>  |
 
 <img src="images/step_05_-_scenario_11_-_success_metrics.jpg" width="700"/>
-<br><br>
 
 
 
@@ -926,7 +842,6 @@ Although this was not specifically mentioned in the project instructions, measur
 - Following this change of controller, the drone trajectory met the 1 m error requirement. However the drone behavior was erratic. Position and velocity control gains were re-tuned by using trial and error. The following values greatly improved the drone behavior.
 
 <img src="images/step_06_-_scenario_11_-_control_gains.jpg" width="350"/>
-<br><br>
 
 
 ##### Results
@@ -936,7 +851,6 @@ Although this was not specifically mentioned in the project instructions, measur
 | <img src="videos/step_06_-_scenario_11_-_before_tuning.gif" width="700"/> | <img src="videos/step_06_-_scenario_11_-_after_tuning.gif" width="700"/>  |
 
 <img src="images/step_06_-_scenario_11_-_success_metrics.jpg" width="700"/>
-<br><br>
 
 - Also: following this change of controller, scenarios 6-10 were re-run to confirm requirements were still met.
 
