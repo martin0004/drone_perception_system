@@ -9,7 +9,7 @@ The system developed in this project is based upon a methodology by TELLEX, BROW
 This project is part of Udacity's Autonomous Flight Engineer Nanodegree [2]. This README serves as a final report for the project.
 
 <br>
-<img src="videos/step_03_a_scenario_08.gif" height="400"/>
+<img src="videos/step_03_a_-_scenario_08.gif" height="400"/>
 <img src="images/ekf_pseudo_code.jpg" height="400"/>
 
 <br><br>
@@ -220,13 +220,21 @@ The flight simulator itself is a small QT application. The flying area is about 
 
 # Coordinate Frames
 
-##### Body Frame, World Frame, Propeller Convention
+##### Body Frame
 
-This project uses the same **body frame**, **world frame** and **propeller sign convention** as in the Drone Control System project of this nanodegree. See reference [4] for a descriptions of these frames.
+Same as in the Drone Control System project of this nanodegree [4].
+
+##### World Frame
+
+Same as in the Drone Control System project of this nanodegree [4].
+
+##### Propeller Sign Convention
+
+Same as in the Drone Control System project of this nanodegree [4].
 
 ##### Rotation Matrix R_bg
 
-This project use rotation matrix Rbg, which is the rotation matrix from the body frame to the world frame [1]. R_bg is a function of Euler angles Ф (pitch), θ (roll), ψ (yaw).
+This project use rotation matrix R_bg, which is the rotation matrix from the body frame to the world frame [1]. R_bg is a function of Euler angles Ф (pitch), θ (roll), ψ (yaw).
 
 Euler angles Ф, θ, ψ are provided as input to any estimator which needs to derive R internally.
 
@@ -241,18 +249,18 @@ Euler angles Ф, θ, ψ are provided as input to any estimator which needs to de
 
 # Vehicule
 
-##### Architecture
+### Architecture
 
 The autonomous drone in this project uses the classical perception, planning and control architecture.
 
 This project focuses on developing the **perception** system. The **actuators**, **sensors** and **process** (i.e. the drone itself) are already implemented in the Udacity C++ simulator used in this project [3]. The **planning** and **control** systems are also part of the simulator. A series of predefined trajectories will feed waypoints to the control system during each simulation scenario. However in the last step of this project, the control system is be replaced by the control system which was developed in the 3rd project of this Nanodegree [4].
 
 <br>
-<img src="images/autonomy_architecture.jpg" width="700"/>
+<img src="images/vehicle_-_architecture.jpg" width="700"/>
 <br>
 <br>
 
-##### Sensors
+### Sensors
 
 | Sensor       | Measurement                 | Symbol                | Rate (*) | Time Step (**) |
 |--------------|-----------------------------|-----------------------|----------|----------------|
@@ -284,7 +292,7 @@ The perception system developed in this project is made of 2 estimators, which a
 Note that the inputs / outputs I used are based upon Udacity’s C++ Flight Simulator internal workings [3]. These are a little different from the methodology presented in the lectures [2] and from article [1].
 
 <br>
-<img src="images/perception_system_architecture.jpg" width="700"/>
+<img src="images/perception_system_-_architecture.jpg" width="700"/>
 <br>
 <br>
 
@@ -297,7 +305,7 @@ Note that the Euler angles order in this state vector is yaw (ψ), pitch (θ), r
 This state split is the methodology which was suggested in the Estimation course of the Nanodegree. It is a trade-off between implementation complexity, explainability and functionality. [5]
 
 <br>
-<img src="images/state_vector.jpg" width="500"/>
+<img src="images/perception_system_-_estimated_state_vector.jpg" width="500"/>
 <br><br>
 
 
@@ -311,11 +319,12 @@ This state split is the methodology which was suggested in the Estimation course
 ##### Overview
 
 <br>
-<img src="images/attitude_estimator_-_overview_01.jpg" width="800"/>
-<br><br>
-
-<img src="images/attitude_estimator_-_overview_02.jpg" width="800"/>
+<img src="images/attitude_estimator_-_overview.jpg" width="800"/>
 <br>
+
+The attitude estimator is in charge of estimating the pitch and roll angles, θ_hat and Ф_hat. This is performed using a complementary filter.
+
+Furthermore, this estimator also estimates yaw angle ψ_hat by performing a simple time step integral (i.e. dead reckoning). This is imprecise in the long run, so ψ_bar is reused later on by the EKF which performs the process covariance and measurement update on ψ. Note that the IMU runs at 500 Hz and the Magnetometer at 100 Hz, so ψ can get integrated 5 times before a measurement update in the EKF.
 
 ##### Complementary Filter
 
@@ -618,15 +627,329 @@ You can see which sensors are used by a scenario in section `# Sensors` of a con
 
 
 
+# Validation in C++ Flight Simulator
+
+### Step 1 - Sensors Noise Characterization
+
+##### Objectives
+
+- Calculate measurement noise standard deviations for the GPS x position and the IMU x accelerometer.
+- [Optional] Derive standard deviations values for all other sensors.
+- [Optional] Derive mean values for all sensors.
+
+##### Success Metrics
+
+- Standard deviations for GPS x position and IMU x acceleration must capture 68% of noise values.
+
+##### Scenario
+
+- `06_NoisySensors`
+- Drone hovering 1 m above the ground.
+- All sensors (IMU, Magnetometer and GPS) are activated and all have noise.
+
+<br>
+<img src="videos/step_01_-_scenario_06_-_no_charts.gif" width="500"/>
+<br><br>
+
+##### Methodology & Analysis
+
+- Sensor data was collected from all sensors over 60 s (I had to comment line `Sim.RunMode` in the scenario configuration file). Below we can see data for all 13 sensors. All seem to have a random behavior. Most of them are centered around 0, except for GPS z position (around 1 m above ground, which is consistent with the scenario initial conditions) and IMU az value (centered around +g).
+
+<br>
+<img src="images/step_01_-_scenario_06_-_noise.jpeg" width="700"/>
+<br><br>
+
+- A sanity check was performed to see if noise data distributions are relatively Gaussian. Histograms were plotted for all data and confirmed the Gaussian distributions.
+
+<br>
+<img src="images/step_01_-_scenario_06_-_noise_histograms.jpg" width="700"/>
+<br><br>
+
+- Another question before extracting standard deviations is to make sure we have enough data points so σ and μ have converged, which is the case (values seem to relatively converge after 30 s).
+
+<br>
+<img src="images/step_01_-_scenario_06_-_noise_mean_convergence.jpg" width="400"/>
+
+<br>
+<img src="images/step_01_-_scenario_06_-_noise_std_convergence.jpg" width="400"/>
+<br><br>
+
+
+##### Results
+
+| Sensor      |   μ   |   σ  |
+|-------------|-------|------|
+| quad.gps.x  |  0.03 | 0.69 |
+| quad.gps.y  |  0.02 | 0.73 |
+| quad.gps.z  | -1.05 | 2.01 |
+| quad.gps.vx |  0.00 | 0.10 |
+| quad.gps.vy |  0.00 | 0.10 |
+| quad.gps.vz | -0.02 | 0.30 |
+| quad.imu.ax | -0.01 | 0.50 |
+| quad.imu.ay |  0.00 | 0.50 |
+| quad.imu.az |  9.82 | 1.51 |
+| quad.imu.gx |  0.00 | 0.51 |
+| quad.imu.gy |  0.00 | 0.50 |
+| quad.magyaw |  0.00 | 0.10 |
+
+Standard deviations for the GPS x postion and IMU x accelerations are injected at the top of the scenario configuration file (line `Sim.RunMode` is also uncommented to reactivate the max simulation time). Standard deviation capture 68 % of noise, which is was the target metric.
+
+<img src="videos/step_01_-_scenario_06_-_with_charts.gif" width="500"/>
+<br><br>
+
+<img src="images/step_01_-_scenario_06_-_success_metrics.jpg" width="700"/>
+<br><br>
+
+##### Note
+
+Although this was not specifically mentioned in the project instructions, measurement noise standard deviations derived above were injected into file QuadEstimatorEKF.txt
+
+<img src="images/step_01_-_updated_stds.jpg" width="350"/>
+<br><br>
+
+
+### Step 2 - Attitude Estimation
+
+
+##### Objective(s)
+
+- Implement the attitude estimator.
+
+##### Success Metrics
+
+- Max Euler error must be less than 0.1 rad for 3 s.
+
+##### Scenario
+
+- `07_AttitudeEstimation`
+- Drone is hovering 1 m above the ground.
+- Only the IMU is activated and its noise levels are set to 0.
+- The drone receives a series of impulse commands which will change its attitude.
+	- t = 0.1 s, impulse in positive x direction
+	- t = 1.0 s, impulse in negative y direction
+	- t = 1.9 s, impulse in negative x-and-y direction
+	- t = 3~4 s, series of yaw commands
+
+<img src="videos/step_02_-_scenario_07_-_no_charts.gif" width="500"/>
+<br><br>
+
+##### Methodology & Analysis
+
+- UpdateFromIMU() came with a filter using the body rate approximation (method used in article [1]). UpdateFromIMU() was updated with the Euler forward method. Euler angle errors were compared for both methods. We can clearly see the Euler forward method yields a much smaller error (see below). This error also matches the target max Euler error of 0.1 rad.
+
+- The simulator default value for τ (100) provided good results and was kept as-is.
+
+
+##### Results
+
+<img src="images/step_02_-_scenario_07_-_estimated_states.jpg" width="700"/>
+<br><br>
+
+<img src="videos/step_02_-_scenario_07_-_with_charts.gif" width="500"/>
+<br><br>
+
+<img src="images/step_02_-_scenario_07_-_success_metrics.jpg" width="700"/>
+<br><br>
+
+
+### Step 3-A - Prediction Step (No Noise)
+
+
+##### Objective(s)
+
+- Implement the state update of the prediction step.
+
+##### Success Metrics
+
+- Capture the drone predicted positions and speeds (qualitative).
+
+##### Scenario
+
+- `08_PredictState`
+- A drone follows a square trajectory 1 m above ground.
+- Only the IMU is activated and its noise levels are set to 0.
+
+<img src="videos/step_03_a_-_scenario_08.gif" width="700"/>
+<br><br>
+
+##### Methodology & Analysis
+
+- The process model was implemented in method PredictState(). Note that this method implements the process model only. The covariance update will be taken care of in another method in step 3-B.
+
+- Note that after implementing the process model, we do observe a slow drift of estimated states, which is to be expected since the measurement update step is not implemented yet.
+
+##### Results
+
+<img src="images/step_03_a_-_scenario_08_-_predicted_states.jpg" width="700"/>
+<br><br>
+
+- The charts allowed to do a qualitative validation that the predicted state update (positions and speeds) was implemented correctly.
+
+
+
+### Step 3-B - Prediction Step (With Noise)
+
+##### Objective(s)
+
+- Implement the covariance update of the prediction step.
+
+##### Success Metrics
+
+- Capture the quad predicted position/speed standard deviations (qualitative).
+
+##### Scenario
+
+- `09_PredictionCov`
+- 10 identical drones at the same location hovering 1 m above ground.
+- Only the IMUs are activated and their noise is also activated.
+
+<img src="videos/step_03_b_-_scenario_09.gif" width="500"/>
+<br><br>
+
+##### Methodology & Analysis
+
+- Method R_bg_prime was implemented with the R_bg_prime matrix calculation.
+- Method Predict() was completed to include the predicted covariance.
+- Process noise parameters QPosXYStd and QVelXYStd were tuned using trial-and-error (the Z terms will be updated in a later step). The following values provided reasonnable results.
+	- QPosXYStd = 0.06
+	- QVelXYStd = 0.20
+- With the above implementation, the following charts are plotted by the simulator.
+- The colored lines represent the 10 drones predicted x positions and x velocities. Note that the drones aren’t moving and yet their positions/speeds are slowly drifting, which is normal since the measurement update is not implemented yet.
+- The white lines represent the predicted covariance for the drone 1 x-position and x-velocies (these curves are the same for all drones). This covariance grows with the same behavior as the predicted positions and speeds. This is an indicator the process noise values are representative of reality and that the methods were correctly implemented.
+
+##### Results
+
+<img src="images/step_03_b_-_scenario_09_-_predicted_std.jpg" width="700"/>
+<br><br>
+
+- The charts allowed to do a qualitative validation that the predicted covariance update (positions and speeds) was implemented correctly.
+
+
+
+
+### Step 4 - Magnetometer Update
+
+##### Objective(s)
+
+- Implement the magnetometer measurement update.
+
+##### Success Metrics
+
+- Estimated yaw true error must be less than 0.1 rad for at least 10 s.
+- Estimated yaw standard deviation must capture the error during most of the scenario (specific time not mentioned in instructions...).
+
+##### Scenario
+
+- `10_MagUpdate`
+- Drone following a square trajectory 1 m above ground (scenario similar to step 3-A).
+- Now the IMU and magnometer are activated and they both have noise.
+
+<img src="images/step_04_-_scenario_10.jpg" width="700"/>
+<br><br>
+
+##### Methodology & Analysis
+
+- Magnetometer measurement update was implemented in method UpdateFromMag().
+
+- Process noise parameter QYawStd was tuned by using trial and errors. The following value provided reasonnable results.
+	- QYawStd = 0.08
+
+- Charts of yaw and yaw error were obtained from the simulator before and after the measurement update and yaw noise were implemented (see below). Before this implementation, we can clearly see a drift in estimated yaw. The error remains less than 0.1 after implementation.
+
+- Note that there is an extra line in the bottom chart representing estimated yaw standard deviation.
+
+- There is are sudden “jumps” in magnetometer readings. This is only due to the yaw value oscillating around pi rads (180o). Since yaw is measured from -pi rad (-180o) to pi rad (180o), when the angle is close to these values the noise may cause the reading value to jump ±2pi rad (360o).
+
+##### Results
+
+<img src="images/step_04_-_scenario_10_-_estimated_states.jpg" width="700"/>
+<br><br>
+
+<img src="images/step_04_-_scenario_10_-_success_metrics.jpg" width="700"/>
+<br><br>
+
+
+
+### Step 5 - GPS Update
+
+##### Objective(s)
+
+- Implement the GPS measurement update.
+
+##### Success Metrics
+
+- Estimated position true error must be less than 1 m for entire simulation.
+
+##### Scenario
+
+- `11_GPSUpdate`
+- Drone following a square trajectory 1 m above ground (scenario similar to step 3-A).
+- All sensors (IMU, Magnetometer and GPS) are activated and all have noise.
+- By default this scenario uses an ideal estimator and sensors do not have noise. Disable the ideal estimator by setting Quad.UseIdealEstimator to 0 and commenting lines SimIMU.AccelStd and SimIMU.GyroStd.
+
+<img src="images/step_05_-_scenario_11_-_activate_noise.jpg" width="250"/>
+<br><br>
+
+
+##### Methodology & Analysis
+
+- GPS measurement update was implemented in method UpdateFromGPS().
+
+- Process noise parameters (QPosXYStd, QPosZStd, QVelXYStd, QVelZStd and QYawStd) current values were good enough to meet the requirements. No additional tuning was performed.
+
+
+##### Results
+
+|       Before tuning             |         After tuning         |
+|---------------------------------|------------------------------|
+| <img src="videos/step_05_-_scenario_11_-_before_tuning.gif" width="700"/> | <img src="videos/step_05_-_scenario_11_-_after_tuning.gif" width="700"/>  |
+
+<img src="images/step_05_-_scenario_11_-_success_metrics.jpg" width="700"/>
+<br><br>
+
+
+
+### Step 6 - Adding My Controller
+
+##### Objective(s)
+
+- Replace the control system with the one I developped in project 3 of this Nanodegree [4].
+
+##### Success Metrics
+
+- Estimated position true error must be less than 1 m for entire simulation.
+
+##### Scenario
+
+- `11_GPSUpdate` (same as in step 5, with noise still active).
+
+
+##### Methodology & Analysis
+
+- Files `QuadController.cpp` and `QuadControlParams.txt` were replaced by the ones I developped in project 3 [4].
+
+- Following this change of controller, the drone trajectory met the 1 m error requirement. However the drone behavior was erratic. Position and velocity control gains were re-tuned by using trial and error. The following values greatly improved the drone behavior.
+
+<img src="images/step_06_-_scenario_11_-_control_gains.jpg" width="350"/>
+<br><br>
+
+
+##### Results
+
+|       Before tuning             |         After tuning         |
+|---------------------------------|------------------------------|
+| <img src="videos/step_06_-_scenario_11_-_before_tuning.gif" width="700"/> | <img src="videos/step_06_-_scenario_11_-_after_tuning.gif" width="700"/>  |
+
+<img src="images/step_06_-_scenario_11_-_success_metrics.jpg" width="700"/>
+<br><br>
+
+- Also: following this change of controller, scenarios 6-10 were re-run to confirm requirements were still met.
 
 
 
 
 
-
-
-
-# Possible improvements
+# Possible Improvements
 
 - Using the report structure of this project as a template for improving reports of project #2 (drone planning system [8]) and project #3 (drone control system [4]).
 
@@ -634,7 +957,7 @@ You can see which sensors are used by a scenario in section `# Sensors` of a con
 	- Adding a “Planning System Architecture” in project #2
 	- Info from section “C++ Implementation” in this report which is common to project #4 and project #3 could be moved to project #3 to avoid duplication.
 
-- In the “Attitude Estimator” and “Position/Speed Estimator” introduction, there is a small block diagram showing the inputs/outputs of each estimator. It would be great to modify these block diagrams so they show what happens in the inside of the estimator. As an example, the attitude estimator actually contains several internal steps: calculating the derivatives using a rotation matrix, sending roll and pitch to a complementary filter and integrating yaw only with dead reackoning. Each of these operations could be an internal block by itself with inputs /outputs. However these “internal” diagram are assumed beyond scope for now...
+- In the “Attitude Estimator” and “Position/Speed Estimator” introduction, there is a small block diagram showing the inputs/outputs of each estimator. It would be great to modify these block diagrams so they show what happens in the inside of the estimator. As an example, the attitude estimator actually contains several internal steps: calculating the derivatives using a rotation matrix, sending roll and pitch to a complementary filter and integrating yaw only with dead reackoning. Each of these operations could be an internal block by itself with inputs /outputs. However making these “internal” block diagrams are an extra effort which is beyond scope for now...
 
 - In section “C++ Implementation”
 
