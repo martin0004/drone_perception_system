@@ -361,10 +361,10 @@ Note that in the C++ implementation, the predicted yaw variable comes from the a
 
 The EKF process noise is modeled with the following assumptions.
 
-1 - The noise is a multivariate Gaussian distribution centered at 0.
-2 - The covariance matrix of this distribution is diagonal (i.e. no interaction between the state variables).
-3 - Standard deviation related to x and y positions is assumed the same.
-4 - Standard deviation related to the x and y velocities is assumed the same.
+- The noise is a multivariate Gaussian distribution centered at 0.
+- The covariance matrix of this distribution is diagonal (i.e. no interaction between the state variables).
+- Standard deviation related to x and y positions is assumed the same.
+- Standard deviation related to the x and y velocities is assumed the same.
 
 Diagonal terms of covariance matrix Q are tuned in the validation section of this project.
 
@@ -859,6 +859,8 @@ Although this was not specifically mentioned in the project instructions, measur
 
 
 # Possible Improvements
+
+- Add a table of content.
 
 - Using the report structure of this project as a template for improving reports of project #2 (drone planning system [8]) and project #3 (drone control system [4]).
 
