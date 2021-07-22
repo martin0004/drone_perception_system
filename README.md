@@ -237,14 +237,14 @@ Euler angles Ф, θ, ψ are provided as input to any estimator which needs to de
 
 # Vehicule
 
-### Architecture
+### Robotic Architecture
 
 The autonomous drone in this project uses the classical perception, planning and control architecture.
 
 This project focuses on developing the **perception** system. The **actuators**, **sensors** and **process** (i.e. the drone itself) are already implemented in the Udacity C++ simulator used in this project [3]. The **planning** and **control** systems are also part of the simulator. A series of predefined trajectories will feed waypoints to the control system during each simulation scenario. However in the last step of this project, the control system is be replaced by the control system which was developed in the 3rd project of this Nanodegree [4].
 
 <br>
-<img src="images/vehicle_-_architecture.jpg" width="700"/>
+<img src="images/vehicle_-_robotic_architecture.jpg" width="700"/>
 <br>
 <br>
 
