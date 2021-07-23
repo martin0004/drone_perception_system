@@ -209,21 +209,41 @@ The flight simulator itself is a small QT application. The flying area is about 
 | rad          | Angle.            |
 
 
-# Coordinate Frames
 
-### Body Frame
+
+
+# Robotic Architecture
+
+The autonomous drone in this project uses the classical perception, planning and control architecture.
+
+This project focuses on developing the **perception** system. The **actuators**, **sensors** and **process** (i.e. the drone itself) are already implemented in the Udacity C++ simulator used in this project [3]. The **planning** and **control** systems are also part of the simulator. A series of predefined trajectories will feed waypoints to the control system during each simulation scenario. However in the last step of this project, the control system is be replaced by the control system which was developed in the 3rd project of this Nanodegree [4].
+
+<br>
+<img src="images/vehicle_-_robotic_architecture.jpg" width="700"/>
+<br>
+<br>
+
+# Vehicle
+
+### Overview
+
+This project uses the same quadcopter as in the Drone Control System project of this nanodegree [4].
+
+### Coordinate Frames
+
+##### Body Frame
 
 Same as in the Drone Control System project of this nanodegree [4].
 
-### World Frame
+##### World Frame
 
 Same as in the Drone Control System project of this nanodegree [4].
 
-### Propeller Sign Convention
+##### Propeller Sign Convention
 
 Same as in the Drone Control System project of this nanodegree [4].
 
-### Rotation Matrix R_bg
+##### Rotation Matrix R_bg
 
 This project use rotation matrix R_bg, which is the rotation matrix from the body frame to the world frame [1]. R_bg is a function of Euler angles Ф (pitch), θ (roll), ψ (yaw).
 
@@ -235,20 +255,7 @@ Euler angles Ф, θ, ψ are provided as input to any estimator which needs to de
 
 
 
-# Vehicule
-
-### Robotic Architecture
-
-The autonomous drone in this project uses the classical perception, planning and control architecture.
-
-This project focuses on developing the **perception** system. The **actuators**, **sensors** and **process** (i.e. the drone itself) are already implemented in the Udacity C++ simulator used in this project [3]. The **planning** and **control** systems are also part of the simulator. A series of predefined trajectories will feed waypoints to the control system during each simulation scenario. However in the last step of this project, the control system is be replaced by the control system which was developed in the 3rd project of this Nanodegree [4].
-
-<br>
-<img src="images/vehicle_-_robotic_architecture.jpg" width="700"/>
-<br>
-<br>
-
-### Sensors
+# Sensors
 
 | Sensor       | Measurement                 | Symbol                | Rate (*) | Time Step (**) |
 |--------------|-----------------------------|-----------------------|----------|----------------|
